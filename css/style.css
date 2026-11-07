@@ -1,4 +1,4 @@
-/* 초평 택틱스 - 레트로 도트 게임 스타일 */
+/* 소수의 덧셈과 뺄셈 - 레트로 도트 게임 스타일 */
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 /* 📱 패드: 두 번 톡 확대 막기, 길게 눌러 메뉴 뜨지 않게 */
 html, body, button, .btn, #board, .layer { touch-action: manipulation; -webkit-touch-callout: none; }

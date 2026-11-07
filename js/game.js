@@ -1,5 +1,5 @@
 // =====================================================
-//  초평 택틱스 - 게임 진행
+//  소수의 덧셈과 뺄셈 - 게임 진행
 // =====================================================
 'use strict';
 
@@ -1205,7 +1205,7 @@ async function bossClear() {
   G.endKind = 'clear'; G.hasNext = !last;
   const total = Object.values(PROG.cleared).reduce((a, b) => a + (b || 0), 0) + Object.values(PROG.bosses).reduce((a, b) => a + (b || 0), 0);
   $('endNext').innerHTML = last
-    ? `🎉 초평 택틱스 - 사라진 소수점 · 끝 🎉<br>열 명의 친구와 함께 보스 10명과 흑진까지 모두 물리쳤어요! 모은 별: ★ ${total}개<br>끝까지 소수 문제를 풀어 줘서 정말 고마워요!`
+    ? `🎉 소수의 덧셈과 뺄셈 - 사라진 소수점 · 끝 🎉<br>열 명의 친구와 함께 보스 10명과 흑진까지 모두 물리쳤어요! 모은 별: ★ ${total}개<br>끝까지 소수 문제를 풀어 줘서 정말 고마워요!`
     : nx.boss ? `다음 이야기 ▶ 👑 보스 ${nx.boss} · ${BOSS_STAGES[nx.boss].name}`
     : `다음 이야기 ▶ 스테이지 ${nx.stage} · ${STAGE_NAMES[nx.stage]}${nx.stage === 10 ? ' (대마왕 흑진!)' : ''}`;
   refreshEndUpgrade();
@@ -1272,7 +1272,7 @@ async function stageClear() {
   G.endKind = 'clear'; G.hasNext = hasNext;
   const total = Object.values(PROG.cleared).reduce((a, b) => a + (b || 0), 0);
   $('endNext').innerHTML = isFinal
-    ? `🎉 초평 택틱스 - 사라진 소수점 · 끝 🎉<br>열 명의 친구와 함께 보스 10명과 대마왕 흑진까지 물리치고 초평면을 지켜 냈어요! 모은 별: ★ ${total}개<br>끝까지 소수 문제를 풀어 줘서 정말 고마워요!`
+    ? `🎉 소수의 덧셈과 뺄셈 - 사라진 소수점 · 끝 🎉<br>열 명의 친구와 함께 보스 10명과 대마왕 흑진까지 물리치고 초평면을 지켜 냈어요! 모은 별: ★ ${total}개<br>끝까지 소수 문제를 풀어 줘서 정말 고마워요!`
     : bossNext ? `다음 이야기 ▶ 👑 ${n === 5 ? '중간보스' : '보스 ' + n} · ${BOSS_STAGES[n].name}`
     : hasNext ? `다음 이야기 ▶ 스테이지 ${n + 1} · ${STAGE_NAMES[n + 1]}`
     : (STAGE_NAMES[n + 1] ? `다음 이야기 ▶ 스테이지 ${n + 1} · ${STAGE_NAMES[n + 1]} — 준비 중이에요!` : '');
