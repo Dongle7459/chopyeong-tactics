@@ -1,0 +1,8 @@
+[초평 이야기 마을 3D - 4학년 2학기 국어 가 1~3단원]
+
+- 1단원 비교하며 읽어요: 초평 마을
+- 2단원 우리말 우리글: 진천읍 (1단원을 마치면 문이 열려요)
+- 진천읍부터 바로 시작하려면 주소 끝에 #jincheon 을 붙이세요.
+
+3D 모델: KayKit (Kay Lousberg) - CC0
+3D 도구: three.js r128 - MIT (lib/three.js-LICENSE.txt)
