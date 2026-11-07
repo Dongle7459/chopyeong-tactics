@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>초평 택틱스 - 사라진 소수점</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="game">
+  <!-- 위쪽 정보 줄 -->
+  <div id="topbar">
+    <button id="homeTopBtn" class="btn small" title="메인 화면">🏠</button>
+    <span id="stageName">스테이지 1</span>
+    <span id="turnInfo">1턴 · 우리 편 차례</span>
+    <span class="spacer"></span>
+    <button id="endTurnBtn" class="btn small">턴 끝내기</button>
+    <button id="saveTopBtn" class="btn small gold" title="지금 전투를 저장해요">💾 저장</button>
+    <button id="loadTopBtn" class="btn small gold" title="다른 저장 칸으로 이동해요">📂 불러오기</button>
+    <button id="ttsBtn" class="btn small" title="대사 읽어 주기 켜기/끄기">🗣 읽기 켬</button>
+    <button id="soundBtn" class="btn small" title="효과음 켜기/끄기">🔊</button>
+  </div>
+
+  <!-- 전투 지도 -->
+  <div id="boardWrap">
+    <canvas id="board"></canvas>
+    <div id="dialogLayer" class="hidden">
+      <div id="dialog">
+        <canvas id="portrait" width="90" height="90"></canvas>
+        <div class="dbody">
+          <div id="dname"></div>
+          <div id="dtext"></div>
+          <div class="dnext">▼</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 아래쪽 캐릭터 정보와 명령 -->
+  <div id="panel">
+    <canvas id="mini" width="64" height="64"></canvas>
+    <div id="uinfo"></div>
+    <div id="actions"></div>
+  </div>
+
+  <!-- 문제 창 -->
+  <div id="qLayer" class="layer hidden">
+    <div class="window qwin">
+      <div id="qTitle"></div>
+      <div id="qStory"></div>
+      <div id="qText"></div>
+      <div id="qOpts"></div>
+      <div id="qFeed" class="hidden">
+        <div id="fHead"></div>
+        <div id="fCalc"></div>
+        <div id="fHint"></div>
+        <button id="fBtn" class="btn big"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인(시작) 화면 -->
+  <div id="titleLayer" class="layer">
+    <div class="titlebox">
+      <div class="tsub">초평면을 지켜라!</div>
+      <h1>초평 택틱스</h1>
+      <div class="tsub2">― 사라진 소수점 ―</div>
+      <div class="theroes" id="tHeroes"></div>
+      <div id="tProgress" class="tstage"></div>
+      <div class="modetabs">
+        <button id="modeN" class="btn small on">😊 보통</button>
+        <button id="modeH" class="btn small">🔥 어려움</button>
+      </div>
+      <div class="tmenu">
+        <button id="newBtn" class="btn big">▶ 새로 시작 (보통)</button>
+        <button id="hardBtn" class="btn big hardbtn">🔥 어려움 새로 시작</button>
+        <button id="selectBtn" class="btn big gold">🗺 스테이지 선택</button>
+        <button id="upBtn" class="btn wide">⚔ 강화하기</button>
+        <button id="reviveBtn" class="btn wide revive hidden">💖 동료 살리기</button>
+        <button id="hidBtn" class="btn wide hid">🔮 히든 스테이지</button>
+        <button id="saveBtn" class="btn">💾 저장하기</button>
+        <button id="loadBtn" class="btn">📂 불러오기</button>
+      </div>
+      <button id="voiceTestBtn" class="btn small" style="margin-top:12px">🗣 목소리 미리 듣기</button>
+    </div>
+  </div>
+
+  <!-- 스테이지 선택 창 -->
+  <div id="selectLayer" class="layer top hidden">
+    <div class="window selwin">
+      <div class="wtitle">🗺 스테이지 선택</div>
+      <div id="stageGrid"></div>
+      <button id="selBack" class="btn">← 메인 화면</button>
+    </div>
+  </div>
+
+  <!-- 저장하기 / 불러오기 창 -->
+  <div id="slotLayer" class="layer top hidden">
+    <div class="window slotwin">
+      <div class="wtitle" id="slotTitle"></div>
+      <div id="slotNameRow">
+        <label for="slotName">이름</label>
+        <input id="slotName" maxlength="10" placeholder="이름을 써 주세요" autocomplete="off">
+      </div>
+      <div id="slotList"></div>
+      <div id="slotMsg"></div>
+      <button id="slotBack" class="btn">← 메인 화면</button>
+    </div>
+  </div>
+
+  <!-- 🧒 주인공 고르기 창 -->
+  <div id="charLayer" class="layer top hidden">
+    <div class="window charwin">
+      <div class="wtitle" id="charTitle">🧒 주인공 고르기</div>
+      <div id="charInfo"></div>
+      <div id="charBody"></div>
+      <button id="charBack" class="btn">← 메인 화면</button>
+    </div>
+  </div>
+
+  <!-- 🔮 히든 스테이지 창 -->
+  <div id="hiddenLayer" class="layer top hidden">
+    <div class="window hidwin">
+      <div class="wtitle">🔮 히든 스테이지</div>
+      <div id="hidInfo"></div>
+      <div id="hidBody"></div>
+      <button id="hidBack" class="btn">← 메인 화면</button>
+    </div>
+  </div>
+
+  <!-- 💖 동료 살리기 창 (어려움 모드) -->
+  <div id="reviveLayer" class="layer top hidden">
+    <div class="window hidwin">
+      <div class="wtitle">💖 동료 살리기</div>
+      <div id="reviveInfo"></div>
+      <div id="reviveBody"></div>
+      <button id="reviveBack" class="btn">← 돌아가기</button>
+    </div>
+  </div>
+
+  <!-- 강화 창 -->
+  <div id="upLayer" class="layer top hidden">
+    <div class="window upwin">
+      <div class="wtitle">⚔ 강화 시간!</div>
+      <div id="upInfo"></div>
+      <div id="upMsg"></div>
+      <div id="upBody"></div>
+      <button id="upBack" class="btn">← 메인 화면</button>
+    </div>
+  </div>
+
+  <!-- 결과 화면 (클리어 / 다시 도전) -->
+  <div id="endLayer" class="layer hidden">
+    <div class="window endwin">
+      <div id="endTitle"></div>
+      <div id="endStars"></div>
+      <div id="endStats"></div>
+      <div id="endSave"></div>
+      <div id="endNext"></div>
+      <div class="endbtns">
+        <button id="upEndBtn" class="btn red">⚔ 강화하기</button>
+        <button id="reviveEndBtn" class="btn revive hidden">💖 동료 살리기</button>
+        <button id="retryBtn" class="btn">↺ 다시 하기</button>
+        <button id="nextBtn" class="btn gold">다음 스테이지 ▶</button>
+        <button id="homeBtn" class="btn">🏠 메인 화면</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/sprites.js"></script>
+<script src="js/questions.js"></script>
+<script src="js/upgrade.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

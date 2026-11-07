@@ -1,0 +1,271 @@
+/* 초평 택틱스 - 레트로 도트 게임 스타일 */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+/* 📱 패드: 두 번 톡 확대 막기, 길게 눌러 메뉴 뜨지 않게 */
+html, body, button, .btn, #board, .layer { touch-action: manipulation; -webkit-touch-callout: none; }
+html, body { margin: 0; padding: 0; background: #10101c; color: #fff; }
+body {
+  font-family: 'Galmuri11', 'Galmuri9', 'Malgun Gothic', sans-serif;
+  display: flex; justify-content: center; min-height: 100vh;
+  user-select: none; -webkit-user-select: none;
+}
+#game { position: relative; width: 100%; max-width: 900px; padding: 8px; }
+
+.hidden { display: none !important; }
+
+/* 파란 게임 창 (옛날 RPG 느낌) */
+.window, #panel, #topbar, #dialog {
+  background: linear-gradient(180deg, #2c3e9c 0%, #1a2470 100%);
+  border: 3px solid #f4f4f4;
+  box-shadow: 0 0 0 3px #1a1020, inset 0 0 0 2px #6a7ee0;
+  border-radius: 6px;
+}
+
+#topbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 10px; margin-bottom: 8px; font-size: 15px;
+}
+#topbar .spacer { flex: 1; }
+#stageName { color: #ffe27a; }
+
+#boardWrap { position: relative; border: 3px solid #1a1020; border-radius: 4px; overflow: hidden; background: #000;
+  width: fit-content; max-width: 100%; margin: 0 auto; }
+/* 📱 지도가 화면 높이에 맞게 줄어들어서, 아래 명령 버튼까지 스크롤 없이 한 화면에 보여요 */
+#board { display: block; width: 100%; height: auto;
+  image-rendering: pixelated; image-rendering: crisp-edges; touch-action: manipulation; cursor: pointer; }
+
+.shake { animation: shake 0.4s; }
+@keyframes shake {
+  0%,100% { transform: translate(0,0); }
+  20% { transform: translate(-6px,3px); }
+  40% { transform: translate(6px,-3px); }
+  60% { transform: translate(-4px,2px); }
+  80% { transform: translate(4px,-2px); }
+}
+
+/* 버튼 */
+.btn {
+  font-family: inherit; color: #fff; cursor: pointer;
+  background: linear-gradient(180deg, #4a63d8, #2c3e9c);
+  border: 2px solid #f4f4f4; border-radius: 6px;
+  box-shadow: 0 3px 0 #1a1020;
+  padding: 8px 14px; font-size: 17px;
+}
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #1a1020; }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn.small { padding: 4px 10px; font-size: 14px; }
+.btn.big { padding: 12px 26px; font-size: 22px; }
+.btn.red { background: linear-gradient(180deg, #e0505a, #9c2c3e); }
+.btn.gold { background: linear-gradient(180deg, #f2c84b, #c08a20); color: #1a1020; }
+
+/* 아래 정보 패널 */
+#panel {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 8px; padding: 8px 12px; min-height: 92px;
+}
+#mini { width: 64px; height: 64px; image-rendering: pixelated; background: #10183e; border: 2px solid #6a7ee0; border-radius: 4px; flex-shrink: 0; }
+#uinfo { flex: 1; font-size: 15px; line-height: 1.5; }
+#uinfo .uname { font-size: 19px; color: #ffe27a; }
+#uinfo .urole { font-size: 13px; color: #b8c4ff; margin-left: 6px; }
+#uinfo .tip { color: #e6ecff; }
+.hpbar { display: inline-block; width: 110px; height: 10px; background: #1a1020; border: 1px solid #fff; vertical-align: middle; margin: 0 6px; }
+.hpbar > i { display: block; height: 100%; background: #4fd05a; }
+.hpbar.enemy > i { background: #e0505a; }
+#actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; max-width: 50%; }
+#actions .btn { min-width: 74px; }
+
+/* 대화창 */
+#dialogLayer { position: absolute; inset: 0; z-index: 10; display: flex; align-items: flex-end; padding: 8px; cursor: pointer; }
+#dialog { display: flex; gap: 12px; width: 100%; padding: 10px 14px; min-height: 112px; }
+#dialog.narr #portrait { display: none; }
+#portrait { width: 90px; height: 90px; image-rendering: pixelated; background: #10183e; border: 2px solid #6a7ee0; border-radius: 4px; flex-shrink: 0; }
+.dbody { flex: 1; position: relative; }
+#dname { color: #ffe27a; font-size: 18px; margin-bottom: 4px; min-height: 4px; }
+#dtext { font-size: 19px; line-height: 1.55; word-break: keep-all; }
+.dnext { position: absolute; right: 2px; bottom: 0; font-size: 14px; animation: blink 0.8s infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* 덮는 화면 */
+.layer {
+  position: absolute; inset: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10, 10, 30, 0.72); padding: 12px;
+}
+
+/* 문제 창 */
+.qwin { width: 100%; max-width: 560px; padding: 18px 20px; text-align: center; }
+#qTitle { font-size: 22px; color: #ffe27a; margin-bottom: 8px; }
+#qStory { font-size: 17px; line-height: 1.6; margin-bottom: 10px; word-break: keep-all; color: #e6ecff; }
+#qText { font-size: 40px; margin: 10px 0 16px; letter-spacing: 2px; }
+#qOpts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+#qOpts .btn { font-size: 28px; padding: 14px 6px; }
+#qOpts .btn.right { background: linear-gradient(180deg, #4fd05a, #2a8a34); opacity: 1; }
+#qOpts .btn.wrong { background: linear-gradient(180deg, #e0505a, #9c2c3e); opacity: 1; }
+#qFeed { margin-top: 14px; }
+#fHead { font-size: 26px; margin-bottom: 8px; }
+#fHead.ok { color: #7cff8a; }
+#fHead.no { color: #ff9aa0; }
+#fHint { font-size: 16px; line-height: 1.6; color: #e6ecff; margin: 10px 0 14px; word-break: keep-all; }
+
+/* 세로셈 */
+.vcalc { display: inline-grid; gap: 0; font-size: 26px; background: #f8f4e6; color: #1a1020; padding: 8px 14px; border-radius: 6px; }
+.vcalc span { width: 1.1em; height: 1.4em; display: flex; align-items: center; justify-content: center; }
+.vcalc .line { grid-column: 1 / -1; height: 3px; background: #1a1020; margin: 2px 0; width: auto; }
+.vcalc .ans { color: #d0303a; }
+.vcalc .dot { color: #d0303a; }
+
+/* 시작 화면 */
+#titleLayer { background: radial-gradient(circle at 50% 40%, #3a2a8a 0%, #10101c 75%); }
+.titlebox { text-align: center; }
+.titlebox h1 { font-size: 56px; margin: 4px 0; color: #ffe27a; text-shadow: 4px 4px 0 #a0302a, 6px 6px 0 #1a1020; letter-spacing: 4px; }
+.tsub { font-size: 18px; color: #b8c4ff; }
+.tsub2 { font-size: 22px; color: #fff; margin-bottom: 14px; }
+.theroes canvas { width: 96px; height: 96px; image-rendering: pixelated; margin: 0 8px; }
+.tstage { margin: 12px 0 18px; color: #b8c4ff; }
+
+/* 결과 화면 */
+.endwin { padding: 22px 28px; text-align: center; max-width: 480px; width: 100%; }
+#endTitle { font-size: 30px; color: #ffe27a; margin-bottom: 8px; }
+#endStars { font-size: 46px; color: #ffd84a; letter-spacing: 6px; margin: 6px 0; text-shadow: 3px 3px 0 #1a1020; }
+#endStats { font-size: 18px; line-height: 1.7; }
+#endNext { font-size: 15px; color: #b8c4ff; margin: 12px 0 16px; }
+.endbtns { display: flex; justify-content: center; gap: 10px; }
+
+/* 메인 화면 메뉴 */
+.layer.top { z-index: 30; }
+.tmenu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 460px; margin: 0 auto; }
+.tmenu .btn.big { font-size: 19px; padding: 12px 10px; }
+.theroes { min-height: 80px; }
+.theroes canvas { width: 72px; height: 72px; }
+.wtitle { font-size: 24px; color: #ffe27a; margin-bottom: 12px; text-align: center; }
+
+/* 스테이지 선택 */
+.selwin { width: 100%; max-width: 620px; padding: 18px; text-align: center; max-height: 100%; overflow-y: auto; }
+#stageGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.stagebtn { text-align: left; font-size: 15px; padding: 8px 10px; line-height: 1.4; }
+.stagebtn b { color: #ffe27a; font-weight: normal; }
+.stagebtn .st { float: right; color: #ffd84a; }
+.stagebtn.locked { background: linear-gradient(180deg, #4a4a5a, #2a2a38); }
+
+/* 저장 슬롯 */
+.slotwin { width: 100%; max-width: 520px; padding: 18px; text-align: center; }
+#slotNameRow { display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 12px; font-size: 17px; }
+#slotName {
+  font-family: inherit; font-size: 18px; padding: 6px 10px; width: 200px;
+  border: 2px solid #f4f4f4; border-radius: 6px; background: #f8f4e6; color: #1a1020;
+  user-select: text; -webkit-user-select: text;
+}
+#slotList { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.slot { display: flex; gap: 8px; align-items: stretch; }
+.slot .slotmain { flex: 1; text-align: left; font-size: 15px; line-height: 1.5; padding: 8px 12px; }
+.slot .slotmain b { color: #ffe27a; font-weight: normal; font-size: 17px; }
+.slot .slotmain.confirm { background: linear-gradient(180deg, #f2c84b, #c08a20); color: #1a1020; }
+.slot .slotmain.confirm b { color: #1a1020; }
+.slot .slotdel { font-size: 14px; padding: 4px 10px; }
+#slotMsg { min-height: 24px; font-size: 16px; color: #7cff8a; margin-bottom: 10px; }
+#endSave { font-size: 15px; color: #7cff8a; margin-top: 8px; }
+.endbtns { flex-wrap: wrap; }
+
+#topbar { flex-wrap: wrap; }
+#ttsBtn.off { background: linear-gradient(180deg, #4a4a5a, #2a2a38); }
+
+/* 창이 화면보다 길면 스크롤 */
+.layer { align-items: flex-start; overflow-y: auto; }
+.layer > * { margin: auto; }
+.tmenu .wide { grid-column: 1 / -1; font-size: 18px; padding: 10px; background: linear-gradient(180deg, #e0505a, #9c2c3e); }
+.tmenu .wide:disabled { background: linear-gradient(180deg, #4a4a5a, #2a2a38); }
+.glow { animation: glow 1.2s infinite; }
+@keyframes glow { 50% { box-shadow: 0 3px 0 #1a1020, 0 0 16px #ffe27a; } }
+
+/* 강화 창 */
+.upwin { width: 100%; max-width: 680px; padding: 16px 18px; text-align: center; }
+#upInfo { font-size: 17px; line-height: 1.6; margin-bottom: 8px; }
+#upInfo .pts { color: #ffe27a; font-weight: normal; font-size: 22px; }
+.small { font-size: 13px; color: #b8c4ff; }
+#upMsg { min-height: 22px; color: #7cff8a; font-size: 16px; margin-bottom: 8px; word-break: keep-all; }
+.uptip { font-size: 16px; margin: 6px 0 10px; color: #e6ecff; }
+.upgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.upcard { display: flex; gap: 10px; align-items: center; text-align: left; padding: 8px 10px; font-size: 14px; line-height: 1.5; }
+.upcard b { color: #ffe27a; font-weight: normal; font-size: 17px; }
+.upface { width: 56px; height: 56px; image-rendering: pixelated; background: #10183e; border: 2px solid #6a7ee0; border-radius: 4px; flex-shrink: 0; }
+.uphead { display: flex; gap: 12px; align-items: center; text-align: left; background: rgba(0,0,0,0.2); border-radius: 6px; padding: 8px 10px; font-size: 15px; line-height: 1.6; margin-bottom: 10px; }
+.uphead .upface { width: 72px; height: 72px; }
+.uphead .big { color: #ffe27a; font-weight: normal; font-size: 20px; }
+.uptabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.upopts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.upopt { text-align: left; font-size: 15px; line-height: 1.6; padding: 10px 12px; }
+.upopt b { color: #ffe27a; font-weight: normal; font-size: 18px; }
+.upopt .tag { display: inline-block; background: #1a1020; color: #9ad0ff; border-radius: 4px; padding: 0 6px; font-size: 13px; margin-right: 4px; }
+.upopt.picked { background: linear-gradient(180deg, #f2c84b, #c08a20); color: #1a1020; outline: 3px solid #ffffff; }
+.upopt.picked b { color: #1a1020; }
+.upok { width: 100%; margin-bottom: 10px; }
+/* 🌟 초월 강화 */
+.uptabs.three { grid-template-columns: 1fr 1fr 1fr; }
+.uptabs .btn { font-size: 15px; padding: 8px 4px; }
+.transtab:not(.gold) { background: linear-gradient(180deg, #8a4fd0, #5a2e8f); }
+#upInfo .tpts { color: #ffd84a; font-weight: normal; font-size: 22px; text-shadow: 0 0 8px #ffb000; }
+.upopt.transopt { background: linear-gradient(180deg, #7a3fc0, #3a1a70); border-color: #ffd84a; }
+.upopt.transopt b { color: #ffd84a; }
+.upopt.transopt.picked { background: linear-gradient(180deg, #ffe27a, #e0a020); }
+.upopt.transopt.picked b { color: #3a1a70; }
+.upcard.trans { border-color: #ffd84a; box-shadow: 0 3px 0 #1a1020, 0 0 10px #ffb000; }
+
+/* 🔮 히든 스테이지 */
+.btn.purple { background: linear-gradient(180deg, #a06ae8, #5a2e8f); }
+.tmenu .wide.hid { background: linear-gradient(180deg, #8a4fd0, #3a1a70); }
+.tmenu .wide.hid:disabled { background: linear-gradient(180deg, #4a4a5a, #2a2a38); }
+.hidwin { width: 100%; max-width: 640px; padding: 18px; text-align: center; }
+#hidInfo { font-size: 16px; line-height: 1.6; margin-bottom: 12px; }
+#hidBody { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.hidstage { background: linear-gradient(180deg, #6a3fc0, #3a1a70); }
+.teamgrid { margin-bottom: 4px; }
+.teamcard { padding: 6px 8px; }
+.teamcard .upface { width: 48px; height: 48px; }
+.teamcard.picked { background: linear-gradient(180deg, #f2c84b, #c08a20); color: #1a1020; outline: 3px solid #ffffff; }
+.teamcard.picked b, .teamcard.picked .small { color: #1a1020; }
+.expbar { display: inline-block; width: 90px; height: 7px; background: #1a1020; border: 1px solid #b8c4ff; vertical-align: middle; }
+.expbar > i { display: block; height: 100%; background: #7cff8a; }
+.exptable { margin: 4px auto; border-collapse: collapse; font-size: 15px; }
+.exptable th { color: #ffe27a; font-weight: normal; padding: 2px 8px; }
+.exptable td { padding: 2px 8px; }
+.lvbadge { background: #2a8a34; color: #fff; border-radius: 4px; padding: 0 5px; font-size: 12px; }
+
+/* 🧒 주인공 고르기 */
+.charwin { width: 100%; max-width: 680px; padding: 18px; text-align: center; }
+#charInfo { font-size: 17px; line-height: 1.6; margin-bottom: 12px; }
+#charBody { margin-bottom: 12px; }
+.chargrid { margin-bottom: 10px; }
+.charcard { font-size: 14px; line-height: 1.5; }
+.charcard b { color: #ffe27a; font-weight: normal; font-size: 18px; }
+.teamrow { cursor: default; padding: 4px 8px; }
+.teamrow .upface { width: 48px; height: 48px; }
+.charbtns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 4px; }
+
+/* 작은 화면(휴대폰) */
+@media (max-width: 600px) {
+  #game { padding: 4px; }
+  #topbar { font-size: 12px; gap: 6px; }
+  #dtext { font-size: 15px; }
+  #portrait { width: 64px; height: 64px; }
+  #dialog { min-height: 90px; }
+  #panel { flex-wrap: wrap; }
+  #actions { max-width: 100%; width: 100%; justify-content: center; }
+  #qText { font-size: 30px; }
+  #qOpts .btn { font-size: 22px; }
+  .titlebox h1 { font-size: 40px; }
+  .upgrid { grid-template-columns: 1fr; }
+  #stageGrid { grid-template-columns: 1fr; }
+}
+
+/* 🔥 난이도 */
+.modetabs { display: flex; gap: 8px; justify-content: center; margin: 4px 0 10px; }
+.modetabs .btn { min-width: 120px; opacity: 0.6; }
+.modetabs .btn.on { opacity: 1; box-shadow: 0 3px 0 #1a1020, 0 0 0 3px #ffe27a; }
+.tmenu .hardbtn, .modetabs #modeH.on { background: linear-gradient(180deg, #ff8a3a, #b8401a); }
+.btn.revive { background: linear-gradient(180deg, #ff7ab8, #b0306a); }
+#reviveInfo { font-size: 16px; line-height: 1.6; margin-bottom: 12px; }
+#reviveBody { margin-bottom: 12px; }
+.tmenu #selectBtn { grid-column: 1 / -1; }
+
+/* 👑 중간보스 */
+.stagebtn.midstage { background: linear-gradient(180deg, #e0a83a, #8a5a10); }
+.stagebtn.midstage.locked { background: linear-gradient(180deg, #4a4a5a, #2a2a38); }
